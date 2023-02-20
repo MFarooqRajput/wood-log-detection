@@ -35,3 +35,4 @@ Keras, on the other hand, is a high-level API that runs on top of TensorFlow. Ke
 ## Jupyter Notebook
 
 1. Explore the pith detection model **PithDetectionModelExplore**
+2. Explore the pith detection model + Pith to Bark Radial Line model **PithToBarkRadialLine**
