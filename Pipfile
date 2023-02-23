@@ -8,6 +8,10 @@ jupyter = "*"
 tensorflow = "*"
 matplotlib = "*"
 opencv-python = "*"
+pandas = "*"
+openpyxl = "*"
+scipy = "*"
+scikit-learn = "*"
 
 [dev-packages]
 
