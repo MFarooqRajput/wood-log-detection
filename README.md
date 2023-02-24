@@ -42,3 +42,5 @@ Keras, on the other hand, is a high-level API that runs on top of TensorFlow. Ke
 
 1. Baseline Model **BaselineModel**
 2. Polar Model **PolarModel**
+3. Canny Edge Detection Model **CannyEdgeDetectionModel**
+4. Sobel Edge Detection Model **SobelEdgeDetectionModel**
