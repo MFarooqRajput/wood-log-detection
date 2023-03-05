@@ -234,6 +234,3 @@ poetry.toml
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,python,jupyternotebooks
-
-### ignore generated dataset
-dataset/grayscale_images/

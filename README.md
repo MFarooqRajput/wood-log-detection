@@ -38,14 +38,8 @@ Keras, on the other hand, is a high-level API that runs on top of TensorFlow. Ke
 2. Explore the pith detection model + Pith to Bark Radial Line model **PithToBarkRadialLine**
 3. Pith to Bark Radial Line with Params **PithToBarkRadialLineParam**
 
-### Phase 2
-
 1. Baseline Model **BaselineModel**
 2. Polar Model **PolarModel**
 3. Canny Edge Detection Model **CannyEdgeDetectionModel**
 4. Sobel Edge Detection Model **SobelEdgeDetectionModel**
 5. Polar Model V (use pith as center for polar) **PolarModelV**
-
-### Results Comparison
-
-1. MSE **MSE**
