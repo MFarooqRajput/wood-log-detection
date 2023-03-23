@@ -7,7 +7,7 @@ import math
 
 IMG_EXTENSIONS = ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP', '.tif']
 
-def append_dict_to_df(df,dict_to_append):
+def append_dict_to_df(df, dict_to_append):
 
     return pd.concat([df, pd.DataFrame.from_records([dict_to_append])], ignore_index=True)
 
@@ -39,9 +39,9 @@ def read_images(path):
     return images, images_df
 
 def get_contours(gray_image):
-    ret, thresh = cv2.threshold(gray_image, 1, 255, 1) #cv2.threshold(gray,127,255,0)
-    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    contours_image = cv2.drawContours(gray_image, contours, -1, 255, 3) #cv2.drawContours(img, contours, -1, (255,0,0), 3)
+    ret, thresh = cv2.threshold(gray_image, 1, 255, 1)
+    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE) #RETR_TREE #RETR_TREE RETR_EXTERNAL RETR_LIST #CHAIN_APPROX_NONE CHAIN_APPROX_SIMPLE
+    contours_image = cv2.drawContours(gray_image, contours, -1, 255, 3)
         
     contours_array = []
     for i in range(len(contours)):
@@ -53,7 +53,6 @@ def get_contours(gray_image):
 def get_points_on_contour(contours_array, no_of_lines):
     #point_indexes = np.random.randint(0, len(contours_array)-1, size = no_of_lines)
     
-    contours_array.sort(key=lambda c:math.atan2(c[0], c[1]))
     n = len(contours_array) - 1
     k = no_of_lines
     point_indexes = [i * (n // k) + min(i, n % k) for i in range(k)]
@@ -62,7 +61,7 @@ def get_points_on_contour(contours_array, no_of_lines):
     for index in point_indexes:
         points_on_contour.append(contours_array[index])
 
-    #points_on_contour.sort(key=lambda c:math.atan2(c[0], c[1]))
+    points_on_contour.sort(key=lambda c:math.atan2(c[0], c[1]))
 
     return points_on_contour
 

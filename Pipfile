@@ -12,6 +12,7 @@ pandas = "*"
 openpyxl = "*"
 scipy = "*"
 scikit-learn = "*"
+seaborn = "*"
 
 [dev-packages]
 

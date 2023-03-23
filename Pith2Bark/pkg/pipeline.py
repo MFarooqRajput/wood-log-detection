@@ -3,43 +3,19 @@ import math
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
-from pkg.model import *
-from pkg.dataset import *
 from pkg.algorithms import *
-from pkg.visualize import *
-
-from pkg.helper import read_images
-from pkg.ranking import read_ringsranking
-from pkg.ranking import read_count
-from pkg.helper import merge_df
+from pkg.helper import *
+from pkg.model import *
 from pkg.pith_prediction import get_pith_prediction
-
-from pkg.helper import get_contours
-from pkg.helper import get_points_on_contour
-from pkg.helper import pixel_to_image
-
-from pkg.helper import convert_to_grayscale
-from pkg.helper import convert_to_polar
-from pkg.helper import convert_to_polar_pith
-from pkg.helper import convert_to_sobel_edge
-from pkg.helper import convert_to_sobel_edge_blur
-from pkg.helper import convert_to_canny_edge
-from pkg.helper import convert_to_canny_edge_otsu
-from pkg.helper import convert_to_canny_edge_triangle
-from pkg.helper import convert_to_canny_edge_manual
-from pkg.helper import convert_to_canny_edge_blur
-from pkg.helper import convert_to_canny_edge_blur_otsu
-from pkg.helper import convert_to_canny_edge_blur_triangle
-from pkg.helper import convert_to_canny_edge_blur_manual
-from pkg.helper import convert_to_laplacian_edge
-from pkg.helper import convert_to_laplacian_edge_blur
+from pkg.read_rings import *
+from pkg.visualize import *
 
 ALGOS = ["subseq", "peaks", "binary", "mwa"]
 
-def prepare_dataset(data_dir, ranking_url, pickle_url):
+def prepare_dataset(data_dir, ranking_fname, pickle_fname):
 
     try:
-        images_ranking_prediction_df = pd.read_pickle(pickle_url)
+        images_ranking_prediction_df = pd.read_pickle(pickle_fname)
 
         # get images
         images, images_df = read_images(data_dir)
@@ -53,16 +29,10 @@ def prepare_dataset(data_dir, ranking_url, pickle_url):
         images, images_df = read_images(data_dir)
 
         # get ranking
-        if DataSet.RINGSRANKING.value in ranking_url:
-            ranking_df = read_ringsranking(ranking_url)
-        elif DataSet.PINE.value in ranking_url:
-            ranking_df = read_count(ranking_url)
-        elif DataSet.FUR.value in ranking_url:
-            ranking_df = read_count(ranking_url)
-        elif DataSet.DATA.value in ranking_url:
-            ranking_df = read_count(ranking_url)
-        elif DataSet.TRACY.value in ranking_url:
-            ranking_df = read_count(ranking_url)
+        if "ringsranking" in ranking_fname:
+            ranking_df = read_rings_ranking(ranking_fname)
+        else:
+            ranking_df = read_rings_count(ranking_fname)
 
         # ranking with images
         images_ranking_df = merge_df(ranking_df, images_df, 'image_name', 'image_name')
@@ -74,7 +44,7 @@ def prepare_dataset(data_dir, ranking_url, pickle_url):
         images_ranking_prediction_df = merge_df(images_ranking_df, prediction_df, 'image_index', 'image_index')
 
         # save
-        images_ranking_prediction_df.to_pickle(pickle_url)
+        images_ranking_prediction_df.to_pickle(pickle_fname)
 
     return images, images_ranking_prediction_df
 
@@ -341,7 +311,7 @@ def change_along_radial_lines(model, gray_image, polar_image, edge_image, predic
 
     return contours_image, points_on_contour, lines_len, lines, lines_pixel_values
 
-def info_along_radial_lines(lines_pixel_values):
+def rings_along_radial_lines(lines_pixel_values):
     radial_lines_info = []
 
     for pixel_values in lines_pixel_values:
@@ -363,49 +333,76 @@ def info_along_radial_lines(lines_pixel_values):
     return rings_count        
 
 def visualize(model, gray_image, polar_image, edge_image, prediction, points_on_contour, lines, lines_pixel_values, rings_count, ranking, no_of_lines):
-    height, width = gray_image.shape[0], gray_image.shape[1]
-        
-    plot_radial_lines(model, gray_image, polar_image, edge_image, prediction, width, height, points_on_contour)
-    #plot_lines(model, gray_image, polar_image, edge_image, lines)
-    #plot_change_along_radial_lines(lines_pixel_values)
-    #plot_rings_count(ALGOS, rings_count, ranking, no_of_lines)
+    plot_radial_lines(model, gray_image, polar_image, edge_image, prediction, points_on_contour)
+    plot_lines(model, gray_image, polar_image, edge_image, lines)
+    plot_change_along_radial_lines(lines_pixel_values)
 
-def stats(no_of_images, model, no_of_lines, names, rankings, images_rings, rings_url, mse_url):
-    rings_min_max_mean = [[], [], [], []]
-    Y_pred = [[], [], [], []]
-    Y_true = []
-    
-    rings_rows = []
+    for idx in range(len(ALGOS)):
+        name = ALGOS[idx]
+        x = np.arange(start=1, stop=no_of_lines+1, step=1)
+        y = rings_count[idx]
+        plot_rings_along_lines(name, x, y, ranking)
+
+def stats_min_max_mean(no_of_images, images_rings, rankings):
+    min_max_mean = [[], [], [], []]
 
     for idx in range(no_of_images):
         rings_count = images_rings[idx]
-        true_mean = rankings[idx]
-     
-        rings_mean = [0] * len(ALGOS)
-        rings_mean[0] = np.mean(rings_count[0])
-        rings_mean[1] = np.mean(rings_count[1])
-        rings_mean[2] = np.mean(rings_count[2]) 
-        rings_mean[3] = np.mean(rings_count[3])
+        orig_mean = rankings[idx]
 
-        rings_min_max_mean[0].append([min(rings_count[0]), max(rings_count[0]), rings_mean[0], true_mean])
-        rings_min_max_mean[1].append([min(rings_count[1]), max(rings_count[1]), rings_mean[1], true_mean])
-        rings_min_max_mean[2].append([min(rings_count[2]), max(rings_count[2]), rings_mean[2], true_mean])
-        rings_min_max_mean[3].append([min(rings_count[3]), max(rings_count[3]), rings_mean[3], true_mean])
-
-        Y_pred[0].append(rings_mean[0])
-        Y_pred[1].append(rings_mean[1])
-        Y_pred[2].append(rings_mean[2])
-        Y_pred[3].append(rings_mean[3])
-
-        Y_true.append(true_mean)
-
-        rings_rows.append([model.value, ALGOS[0], names[idx]] + rings_count[0] + rings_min_max_mean[0][idx])
-        rings_rows.append([model.value, ALGOS[1], names[idx]] + rings_count[1] + rings_min_max_mean[1][idx])
-        rings_rows.append([model.value, ALGOS[2], names[idx]] + rings_count[2] + rings_min_max_mean[2][idx])
-        rings_rows.append([model.value, ALGOS[3], names[idx]] + rings_count[3] + rings_min_max_mean[3][idx])
-
+        min_max_mean[0].append([min(rings_count[0]), max(rings_count[0]), np.mean(rings_count[0]), orig_mean])
+        min_max_mean[1].append([min(rings_count[1]), max(rings_count[1]), np.mean(rings_count[1]), orig_mean])
+        min_max_mean[2].append([min(rings_count[2]), max(rings_count[2]), np.mean(rings_count[2]), orig_mean])
+        min_max_mean[3].append([min(rings_count[3]), max(rings_count[3]), np.mean(rings_count[3]), orig_mean])
     
-    #plot_min_max_mean_orig(ALGOS, rings_min_max_mean, no_of_images)
+    return min_max_mean
+
+def visualize_min_max_mean(no_of_images, min_max_mean):
+
+    for idx in range(len(ALGOS)):
+        name = ALGOS[idx]
+        x = np.arange(start=1, stop=no_of_images + 1, step=1)
+        y = np.array(min_max_mean[idx])
+        plot_min_max_mean_orig(name, x, y)
+
+def save_rings(no_of_images, model, no_of_lines, names, images_rings, min_max_mean, rings_fname):
+
+    rings_rows = []
+    
+    for idx in range(no_of_images):
+        rings_count = images_rings[idx]
+    
+        rings_rows.append([model.value, ALGOS[0], names[idx]] + rings_count[0] + min_max_mean[0][idx])
+        rings_rows.append([model.value, ALGOS[1], names[idx]] + rings_count[1] + min_max_mean[1][idx])
+        rings_rows.append([model.value, ALGOS[2], names[idx]] + rings_count[2] + min_max_mean[2][idx])
+        rings_rows.append([model.value, ALGOS[3], names[idx]] + rings_count[3] + min_max_mean[3][idx])
+    
+    # save rings
+    lines_labels = []
+
+    for idx in range(no_of_lines):
+        lines_labels.append("line_" + str(idx+1))
+
+    rings_header =  ["model", "algo", "image"] + lines_labels + ["min", "max", "mean", "orig"]
+    df = pd.DataFrame(rings_rows, columns= rings_header)
+
+    with open(rings_fname, 'a') as f:
+        df.to_csv(f, header=f.tell()==0, index = False)
+
+def stats_mse(no_of_images, images_rings, rankings):
+    Y_pred = [[], [], [], []]
+    Y_true = []
+
+    for idx in range(no_of_images):
+        rings_count = images_rings[idx]
+        orig_mean = rankings[idx]
+
+        Y_pred[0].append(np.mean(rings_count[0]))
+        Y_pred[1].append(np.mean(rings_count[1]))
+        Y_pred[2].append(np.mean(rings_count[2]))
+        Y_pred[3].append(np.mean(rings_count[3]))
+
+        Y_true.append(orig_mean)
 
     mean_squared_error_arr = [0] * len(ALGOS)
     mean_squared_error_arr[0] = mean_squared_error(Y_true, Y_pred[0], squared=False)
@@ -413,28 +410,19 @@ def stats(no_of_images, model, no_of_lines, names, rankings, images_rings, rings
     mean_squared_error_arr[2] = mean_squared_error(Y_true, Y_pred[2], squared=False)
     mean_squared_error_arr[3] = mean_squared_error(Y_true, Y_pred[3], squared=False)
 
+    return mean_squared_error_arr
+
+def visualize_mse(mean_squared_error_arr):
     x = np.array(ALGOS)
     y = np.array(mean_squared_error_arr)
     plot_mse(x, y)
 
-    # save rings
-    lines_labels = []
-    for idx in range(no_of_lines):
-        lines_labels.append("line_" + str(idx+1))
-
-    rings_header =  ["model", "aglo", "image"] + lines_labels + ["min", "max", "mean", "orig"]
-    rings_stats = pd.DataFrame(rings_rows, columns= rings_header)
-
-    with open(rings_url, 'a') as f:
-        rings_stats.to_csv(f, header=f.tell()==0, index = False)
-        #print(rings_stats)
-
-    # save stats
+def save_mse(model, mean_squared_error_arr, mse_fname):
     stats_header =  ["model"] + ALGOS
     stats_rows = [model.value] + mean_squared_error_arr
     stats_row_data = [stats_rows]
-    mse_stats = pd.DataFrame(stats_row_data, columns= stats_header)
+    df = pd.DataFrame(stats_row_data, columns= stats_header)
 
-    with open(mse_url, 'a') as f:
-        mse_stats.to_csv(f, header=f.tell()==0, index = False)
-        print(mse_stats)
+    with open(mse_fname, 'a') as f:
+        df.to_csv(f, header=f.tell()==0, index = False)
+        display(df)
