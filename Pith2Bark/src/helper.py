@@ -206,4 +206,4 @@ def convert_to_laplacian_edge_blur(gray_image, k=3):
     laplacian = cv2.Laplacian(gray_image, 5, cv2.CV_64F, ksize=k)
     laplacian_edge_image = cv2.convertScaleAbs(laplacian)
     
-    return laplacian_edge_image 
+    return laplacian_edge_image

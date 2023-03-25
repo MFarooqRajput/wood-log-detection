@@ -3,7 +3,7 @@ import tensorflow as tf
 import cv2
 import numpy as np
 
-from pkg.helper import append_dict_to_df
+from src.helper import append_dict_to_df
 
 def pith_prediction(image):
     model = tf.keras.models.load_model('PithDetector')

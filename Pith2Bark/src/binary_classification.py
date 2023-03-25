@@ -12,8 +12,21 @@ from sklearn.metrics import accuracy_score
 
 from sklearn.model_selection import train_test_split
 
-from pkg.util import check_correctness
-from pkg.visualize import heat_map, plot_accuracy
+from src.binary_classification_visual import heat_map
+from src.binary_classification_visual import plot_accuracy
+
+def df_train_test_split(df):
+    columns = ['image', 'algo']
+    training_percent = 0.9
+    y_train, y_test, X_train, X_test  = train_test_split(df[["Damage"]], df.drop(columns=columns), train_size = training_percent)
+
+    return  y_train, y_test, X_train, X_test
+
+def check_correctness(df, original_label, predicted_label):
+    correct = len(df[(df[original_label] == df[predicted_label])])
+    incorrect = len(df) - correct
+
+    return (correct,incorrect,(correct*100/(correct+incorrect)))
 
 def logistic_regression(y_train, y_test, X_train, X_test):
     model = LogisticRegression(solver='liblinear', C=25.0, random_state=0).fit(X_train, y_train)
@@ -248,7 +261,7 @@ def knn(y_train, y_test, X_train, X_test, n):
     
     return model_accuracy
 
-def accuracy_visual(model_1_accuracy, model_2_1_accuracy, model_2_2_accuracy, model_3_accuracy, model_4_accuracy, model_5_1_accuracy, model_5_2_accuracy, model_5_3_accuracy, model_5_4_accuracy, model_5_5_accuracy):
+def accuracy(model_1_accuracy, model_2_1_accuracy, model_2_2_accuracy, model_3_accuracy, model_4_accuracy, model_5_1_accuracy, model_5_2_accuracy, model_5_3_accuracy, model_5_4_accuracy, model_5_5_accuracy):
     #print("Logistic Regression: " + str(model_1_accuracy))
     #print("Gaussian Naïve Bayes: " + str(model_2_1_accuracy))
     #print("Multinomial Naïve Bayes: " + str(model_2_2_accuracy))
@@ -264,10 +277,3 @@ def accuracy_visual(model_1_accuracy, model_2_1_accuracy, model_2_2_accuracy, mo
     accuracy = [model_1_accuracy, model_2_1_accuracy, model_2_2_accuracy, model_3_accuracy, model_4_accuracy, model_5_1_accuracy, model_5_2_accuracy, model_5_3_accuracy, model_5_4_accuracy, model_5_5_accuracy]
     tick_label = ['Logistic Regression', 'Gaussian NB', 'Multinomial NB', 'LDA', 'QDA', 'KNN1', 'KNN2','KNN3','KNN4', 'KNN5']
     plot_accuracy(col, accuracy, tick_label)
-
-def df_train_test_split(df):
-    columns = ['image', 'algo', 'Image', 'Group']
-    training_percent = 0.9
-    y_train, y_test, X_train, X_test  = train_test_split(df[["Damage"]], df.drop(columns=columns), train_size = training_percent)
-
-    return  y_train, y_test, X_train, X_test
