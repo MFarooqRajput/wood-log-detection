@@ -16,6 +16,7 @@ def pith_prediction(image):
 def get_pith_prediction(images):
     prediction_df = pd.DataFrame(columns = ['image_index', 'prediction'])
     for idx, image in enumerate(images):
+        print(idx)
         prediction = pith_prediction(image)
         prediction_df = append_dict_to_df(prediction_df,{'image_index' : idx, 'prediction' : prediction})
     

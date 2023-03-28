@@ -120,34 +120,36 @@ def convert_image(data_dir, idx):
 
     return model_titles, converted_images
 
-def converted_image(model_titles, converted_images):
-    plot_images(model_titles, converted_images)
+def converted_image(model_titles, converted_images, group=None):
+    
+    if group is not None:
+        titles = []
+        images = []
 
-def converted_image_group(model_titles, converted_images, group):
-    titles = []
-    images = []
-
-    if group == 1:
-        iter = 15
-        rows = 5
-        cols = 3
-        inc = 0
-    elif group == 2:
-        iter = 12
-        rows = 4
-        cols = 3
-        inc = 15
-    elif group == 3:
-        iter = 12
-        rows = 4
-        cols = 3
-        inc = 27
-    else:
+        if group == 1:
+            iter = 15
+            rows = 5
+            cols = 3
+            inc = 0
+        elif group == 2:
+            iter = 12
+            rows = 4
+            cols = 3
+            inc = 15
+        elif group == 3:
+            iter = 12
+            rows = 4
+            cols = 3
+            inc = 27
+        else:
             pass
 
-    for i in range(iter):
-        image = converted_images[i+inc]
-        images.append(image)
-        titles.append(model_titles[i+inc])
+        for i in range(iter):
+            image = converted_images[i+inc]
+            images.append(image)
+            titles.append(model_titles[i+inc])
 
-    plot_images_group(titles, images, rows, cols)
+        plot_images_group(titles, images, rows, cols)
+
+    else:
+        plot_images(model_titles, converted_images)    

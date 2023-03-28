@@ -35,6 +35,7 @@ def winner_visual(df):
     no_of_images = 0
 
     for index, row in df.iterrows():
+        print("%s %s %s" % (row['image'], row['mean'], row['orig']))
         name = row['algo']
         x = lines
         y = row[lines_cols].values
