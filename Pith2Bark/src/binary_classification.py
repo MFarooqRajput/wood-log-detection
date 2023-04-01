@@ -261,19 +261,19 @@ def knn(y_train, y_test, X_train, X_test, n):
     
     return model_accuracy
 
-def accuracy(model_1_accuracy, model_2_1_accuracy, model_2_2_accuracy, model_3_accuracy, model_4_accuracy, model_5_1_accuracy, model_5_2_accuracy, model_5_3_accuracy, model_5_4_accuracy, model_5_5_accuracy):
-    #print("Logistic Regression: " + str(model_1_accuracy))
-    #print("Gaussian Naïve Bayes: " + str(model_2_1_accuracy))
-    #print("Multinomial Naïve Bayes: " + str(model_2_2_accuracy))
-    #print("LDA: " + str(model_3_accuracy))
-    #print("QDA: " + str(model_4_accuracy))
-    #print("kNN with K = 1: " + str(model_5_1_accuracy))
-    #print("kNN with K = 2: " + str(model_5_2_accuracy))
-    #print("kNN with K = 3: " + str(model_5_3_accuracy))
-    #print("kNN with K = 4: " + str(model_5_4_accuracy))
-    #print("kNN with K = 5: " + str(model_5_5_accuracy))
+def accuracy(model_accuracy):
+    print("Logistic Regression: " + str(model_accuracy[0]))
+    print("Gaussian Naïve Bayes: " + str(model_accuracy[1]))
+    print("Multinomial Naïve Bayes: " + str(model_accuracy[2]))
+    print("LDA: " + str(model_accuracy[3]))
+    print("QDA: " + str(model_accuracy[4]))
+    print("kNN with K = 1: " + str(model_accuracy[5]))
+    print("kNN with K = 2: " + str(model_accuracy[6]))
+    print("kNN with K = 3: " + str(model_accuracy[7]))
+    print("kNN with K = 4: " + str(model_accuracy[8]))
+    print("kNN with K = 5: " + str(model_accuracy[9]))
     
     col = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    accuracy = [model_1_accuracy, model_2_1_accuracy, model_2_2_accuracy, model_3_accuracy, model_4_accuracy, model_5_1_accuracy, model_5_2_accuracy, model_5_3_accuracy, model_5_4_accuracy, model_5_5_accuracy]
+    accuracy = model_accuracy
     tick_label = ['Logistic Regression', 'Gaussian NB', 'Multinomial NB', 'LDA', 'QDA', 'KNN1', 'KNN2','KNN3','KNN4', 'KNN5']
     plot_accuracy(col, accuracy, tick_label)
