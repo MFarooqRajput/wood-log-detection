@@ -2,19 +2,10 @@ import cv2
 import numpy as np
 
 '''
-How to use?
-
-from src.image_enhance import whiteboard_enhance, sharpening, equalize
-from src.image_enhance import brightness_contrast, brightness_contrast_another
-
-image = whiteboard_enhance(image) #one
-
-image = sharpening(image) #two
 
 gray_image = equalize(gray_image) #three
 
-
-gray_image = brightness_contrast(gray_image) #four
+gray_image = brightness_contrast(gray_image) 
 
 gray_image = brightness_contrast_another(gray_image) #five
 ''' 
@@ -226,7 +217,6 @@ def whiteboard_enhance(img):
 
     return color_balanced_img
 
-
 def sharpening(image):
     # Create the sharpening kernel 
     kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]]) 
@@ -235,29 +225,71 @@ def sharpening(image):
 
     return sharpened_image
 
-def equalize(gray_image):
-    # Equalize the histogram 
+def equalize_histogram(gray_image): 
     equalized_image = cv2.equalizeHist(gray_image) 
 
     return equalized_image
 
-def brightness_contrast(image):
-    # Adjust the brightness and contrast 
-    # Adjusts the brightness by adding 10 to each pixel value 
-    brightness = 10 
-    # Adjusts the contrast by scaling the pixel values by 2.3 
-    contrast = 2.3  
-    image2 = cv2.addWeighted(image, contrast, np.zeros(image.shape, image.dtype), 0, brightness) 
+def clahe_histogram(gray_image):
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(16, 16))
+    clahe_image = clahe.apply(gray_image)
 
-    return image2
+    return clahe_image
 
-def brightness_contrast_another(image):
-    # Adjust the brightness and contrast  
-    # g(i,j)=α⋅f(i,j)+β 
-    # control Contrast by 1.5 
-    alpha = 1.5  
-    # control brightness by 50 
-    beta = 50
-    image2 = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
+def convertScale(img, alpha, beta):
+    """Add bias and gain to an image with saturation arithmetics. Unlike
+    cv2.convertScaleAbs, it does not take an absolute value, which would lead to
+    nonsensical results (e.g., a pixel at 44 with alpha = 3 and beta = -210
+    becomes 78 with OpenCV, when in fact it should become 0).
+    """
 
-    return image2
+    new_img = img * alpha + beta
+    new_img[new_img < 0] = 0
+    new_img[new_img > 255] = 255
+    return new_img.astype(np.uint8)
+
+# Automatic brightness and contrast optimization with optional histogram clipping
+def automatic_brightness_and_contrast(image, clip_hist_percent=25):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Calculate grayscale histogram
+    hist = cv2.calcHist([gray],[0],None,[256],[0,256])
+    hist_size = len(hist)
+
+    # Calculate cumulative distribution from the histogram
+    accumulator = []
+    accumulator.append(float(hist[0]))
+    for index in range(1, hist_size):
+        accumulator.append(accumulator[index -1] + float(hist[index]))
+
+    # Locate points to clip
+    maximum = accumulator[-1]
+    clip_hist_percent *= (maximum/100.0)
+    clip_hist_percent /= 2.0
+
+    # Locate left cut
+    minimum_gray = 0
+    while accumulator[minimum_gray] < clip_hist_percent:
+        minimum_gray += 1
+
+    # Locate right cut
+    maximum_gray = hist_size -1
+    while accumulator[maximum_gray] >= (maximum - clip_hist_percent):
+        maximum_gray -= 1
+
+    # Calculate alpha and beta values
+    alpha = 255 / (maximum_gray - minimum_gray)
+    beta = -minimum_gray * alpha
+
+    '''
+    # Calculate new histogram with desired range and show histogram 
+    new_hist = cv2.calcHist([gray],[0],None,[256],[minimum_gray,maximum_gray])
+    plt.plot(hist)
+    plt.plot(new_hist)
+    plt.xlim([0,256])
+    plt.show()
+    '''
+
+    auto_result = convertScale(gray, alpha=alpha, beta=beta)
+
+    return auto_result
