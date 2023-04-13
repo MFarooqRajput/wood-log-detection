@@ -13,6 +13,7 @@ openpyxl = "*"
 scipy = "*"
 scikit-learn = "*"
 seaborn = "*"
+scikit-plot = "*"
 
 [dev-packages]
 
