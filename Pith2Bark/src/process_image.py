@@ -1,24 +1,86 @@
-from src.helper import read_images
-from src.helper import convert_to_grayscale
-from src.helper import convert_to_polar
-from src.helper import convert_to_polar_pith
-from src.helper import convert_to_sobel_edge
-from src.helper import convert_to_sobel_edge_blur
-from src.helper import convert_to_canny_edge
-from src.helper import convert_to_canny_edge_otsu
-from src.helper import convert_to_canny_edge_triangle
-from src.helper import convert_to_canny_edge_manual
-from src.helper import convert_to_canny_edge_blur
-from src.helper import convert_to_canny_edge_blur_otsu
-from src.helper import convert_to_canny_edge_blur_triangle
-from src.helper import convert_to_canny_edge_blur_manual
-from src.helper import convert_to_laplacian_edge
-from src.helper import convert_to_laplacian_edge_blur
+import matplotlib.pyplot as plt
 
-from src.pith_prediction import pith_prediction
+from src.cv_helper import read_images
+from src.cv_helper import convert_to_grayscale
+from src.cv_helper import convert_to_polar
+from src.cv_helper import convert_to_polar_pith
+from src.cv_helper import convert_to_sobel_edge
+from src.cv_helper import convert_to_sobel_edge_blur
+from src.cv_helper import convert_to_canny_edge
+from src.cv_helper import convert_to_canny_edge_otsu
+from src.cv_helper import convert_to_canny_edge_triangle
+from src.cv_helper import convert_to_canny_edge_manual
+from src.cv_helper import convert_to_canny_edge_blur
+from src.cv_helper import convert_to_canny_edge_blur_otsu
+from src.cv_helper import convert_to_canny_edge_blur_triangle
+from src.cv_helper import convert_to_canny_edge_blur_manual
+from src.cv_helper import convert_to_laplacian_edge
+from src.cv_helper import convert_to_laplacian_edge_blur
 
-from src.process_image_visual import plot_images
-from src.process_image_visual import plot_images_group
+from src.cv_pith_prediction import pith_prediction
+
+def plot_images(titles, images):
+    rows = 13
+    columns = 3
+
+    fig = plt.figure(figsize=(columns*4,rows*4))
+    col_index = 1
+
+    for i in range(3):
+        image = images[i]
+        title = titles[i]
+        
+        fig.add_subplot(rows, columns, col_index)
+        plt.imshow(image, cmap='gray')
+        plt.title(title, fontsize = 8)
+        plt.axis('off')
+        col_index += 1
+
+    for i in range(12):
+        image = images[i+3]
+        title = titles[i+3]
+        
+        fig.add_subplot(rows, columns, col_index)
+        plt.imshow(image, cmap='gray')
+        plt.title(title, fontsize = 8)
+        plt.axis('off')
+        
+        image = images[i+15]
+        title = titles[i+15]
+        
+        fig.add_subplot(rows, columns, col_index+1)
+        plt.imshow(image, cmap='gray')
+        plt.title(title, fontsize = 8)
+        plt.axis('off')
+        
+        image = images[i+27]
+        title = titles[i+27]
+        
+        fig.add_subplot(rows, columns, col_index+2)
+        plt.imshow(image, cmap='gray')
+        plt.title(title, fontsize = 8)
+        plt.axis('off')
+        
+        col_index += 3
+
+    plt.show()
+
+def plot_images_group(titles, images, rows, columns):
+    fig = plt.figure(figsize=(columns*4,rows*4))
+    col_index = 1
+
+    for i in range(len(titles)):
+        image = images[i]
+        title = titles[i]
+        
+        fig.add_subplot(rows, columns, col_index)
+        plt.imshow(image, cmap='gray')
+        plt.title(title, fontsize = 8)
+        plt.axis('off')
+
+        col_index += 1
+
+    plt.show()
 
 def convert_image(data_dir, idx):
     images, images_df = read_images(data_dir)

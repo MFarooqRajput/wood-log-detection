@@ -1,0 +1,40 @@
+model,subseq,peaks,binary,mwa
+Grayscale,408.876,43.363,388.551,36.633
+Polar,189.786,58.979,370.333,32.429
+Polar Pith,130.432,65.885,251.858,49.985
+Sobel,534.566,85.806,499.805,139.232
+Sobel(blur),459.208,42.228,449.321,78.636
+Canny,87.906,48.646,335.882,239.554
+Canny(otsu),62.93,36.363,284.111,195.626
+Canny(triangle),88.544,51.463,313.914,223.879
+Canny(manual),50.152,33.191,248.98,167.631
+Canny(blur),45.404,30.869,250.685,167.797
+Canny(blur otsu),36.174,32.472,201.212,126.786
+Canny(blur triangle),54.2,40.761,238.108,165.325
+Canny(blur manual),37.348,39.397,158.583,95.252
+Laplacian,635.112,187.723,606.076,249.16
+Laplacian(blur),560.322,90.872,567.05,93.825
+Polar Sobel,447.022,16.889,409.228,52.522
+Polar Sobel(blur),327.721,40.099,338.276,15.184
+Polar Canny,15.558,25.299,181.448,109.719
+Polar Canny(otsu),15.184,17.411,216.334,138.354
+Polar Canny(triangle),74.888,36.675,335.094,239.144
+Polar Canny(manual),32.497,39.595,134.848,73.189
+Polar Canny(blur),38.964,44.212,107.578,51.297
+Polar Canny(blur otsu),28.584,34.961,153.459,85.616
+Polar Canny(blur triangle),37.299,17.821,289.655,203.689
+Polar Canny(blur manual),52.898,55.689,66.561,31.027
+Polar Laplacian,614.105,145.279,545.844,186.426
+Polar Laplacian(blur),470.285,15.113,468.185,22.269
+Polar Pith Sobel,320.852,30.472,299.768,29.268
+Polar Pith Sobel(blur),227.995,54.849,240.084,38.189
+Polar Pith Canny,39.445,45.713,97.683,53.945
+Polar Pith Canny(otsu),33.186,37.981,139.662,86.496
+Polar Pith Canny(triangle),62.155,28.884,264.832,186.977
+Polar Pith Canny(manual),45.225,49.69,94.608,56.241
+Polar Pith Canny(blur),54.894,57.734,50.668,31.731
+Polar Pith Canny(blur otsu),46.398,49.902,93.529,51.701
+Polar Pith Canny(blur triangle),26.716,13.429,221.406,154.117
+Polar Pith Canny(blur manual),57.468,59.737,57.882,41.247
+Polar Pith Laplacian,449.339,85.021,406.931,95.781
+Polar Pith Laplacian(blur),344.56,33.127,351.915,38.794
