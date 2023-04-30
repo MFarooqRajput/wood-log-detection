@@ -4,8 +4,8 @@ import numpy as np
 from src.cv_visual import plot_rings_along_lines
 from src.cv_visual import plot_min_max_mean_orig
 
-def winner_model_algo(mse_fname):
-    df = pd.read_csv(mse_fname, index_col='model')
+def winner_model_algo(rmse_fname):
+    df = pd.read_csv(rmse_fname, index_col='model')
     col_list = list(df)
     winner_idx = df[col_list].min(axis=1).idxmin()
 
@@ -21,8 +21,8 @@ def winner_rings(rings_fname, winner_idx, algo):
     #display(rings_df)
     return rings_df
 
-def winner_model_rings(mse_fname, rings_fname):
-    model, algo = winner_model_algo(mse_fname)
+def winner_model_rings(rmse_fname, rings_fname):
+    model, algo = winner_model_algo(rmse_fname)
     df = winner_rings(rings_fname, model, algo)
 
     return df
